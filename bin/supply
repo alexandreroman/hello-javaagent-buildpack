@@ -1,0 +1,20 @@
+#!/bin/sh
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+DEPS_DIR=$3
+INDEX=$4
+
+echo "Applying hello-javaagent buildpack..."
+
+echo "Downloading Java agent..."
+wget "https://github.com/alexandreroman/hello-javaagent/releases/download/v1.0.0/hello-javaagent-1.0.0.jar" -O "${DEPS_DIR}/${INDEX}/hello-javaagent.jar" -q
+
+echo "Adding Java agent to JVM..."
+cat >> "${DEPS_DIR}/${INDEX}/config.yml" <<EOL
+name: "hello-javaagent"
+config:
+  additional_libraries:
+  java_opts:
+    javaagents: [ /vcap/deps/$INDEX/hello-javaagent.jar ]
+EOL
